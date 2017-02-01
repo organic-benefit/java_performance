@@ -166,7 +166,7 @@ public void operandStack(){
 - HotSpot JVM이나 IBM JVM은 두 Stack을 구분하지 않고 Native Stack으로 통합되어 있음
 - Stack Size 조정은 -Xss와 -Xoss 두가지로 조절 가능
 - -Xss는 Native Stack -Xoss는 Java Stack을 조정하는 옵션
-- HotSpot JVM에서는 -Xoss만 사용
+- HotSpot JVM에서는 -Xss만 사용
 
       Java에서 Native Memory를 설정하는 방법은 따로 없고 Process에 가용 메모리에서 Heap, Method Area등
       Java Runtime Memory를 뺀 나머지를 사용 할 수 있음. Native Memory가 부족 할 경우에도 OutOfMemory가 발생함.
