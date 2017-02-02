@@ -83,12 +83,12 @@ public void operandStack(){
     0 : iconst_5
     1 : istore_1
     2 : bipush 6
-    3 : istore_2
-    4 : iload_1
-    5 : iload_2
-    6 : iadd
-    7 : isore_3
-    8 : return
+    4 : istore_2
+    5 : iload_1
+    6 : iload_2
+    7 : iadd
+    8 : isore_3
+    9 : return
 }
 ```
 
@@ -138,19 +138,19 @@ public void operandStack(){
     0 : iconst_5
     1 : istore_1
     2 : bipush 6
-    3 : istore_2
-    4 : iload_1
-    5 : iload_2
-    6 : iadd
-    7 : isore_3
-    8 : goto 12
-    9 : astore 4
-    10 : iconst_0
-    11 : istore_3
-    12 : return
+    4 : istore_2
+    5 : iload_1
+    6 : iload_2
+    7 : iadd
+    8 : isore_3
+    9 : goto 12
+    12 : astore 4
+    14 : iconst_0
+    15 : istore_3
+    16 : return
     Exception table:
     from    to   target   type
-     6       7     9      Class java/lang/NullPointerException
+     5       9     12      Class java/lang/NullPointerException
 }
 ```
 
