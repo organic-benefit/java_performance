@@ -1,17 +1,19 @@
 # Runtime Data Areas-02
+Runtime Data Areas 2번째 시간으로 Method Area와 Heap 의 구조, Simulation을 해보는 구성으로 준비 하였다.<br>
+이번 시간을 통해 전반적인 JVM 동작을 이해하고, Runtime Data Areas를 이해하자.
 
 ## Method Area
 ![](assetc/2-1.png)<br>
 출처 [(주)엑셈](http://www.slideshare.net/novathinker/2-runtime-data-areas?qid=cf17e59d-856b-429c-9b7e-6f93b10f987e&v=&b=&from_search=1)
 
 앞시간에 설명했던 내용들과는 다르게 Method Area는 모든 Thread에서 공유하는 메모리 영역이다.<br>
-이 메모리 영역은 classLoader에 의해서 로드된<br>
-Class나 Interface를 의미하는 모든 Type의 메타정보를 저장하는 논리적 메모리 공간이다.<br>
+이 메모리 영역은 classLoader에 의해서 로드된 Class나 Interface를 의미하는 <br>
+모든 **Type의 메타정보를 저장** 하는 논리적 메모리 공간이다.<br>
 
-Method Area는 JVM이 기동할 때 생성이 되며 Garbege Collection의 대상이 되며,<br>
+Method Area는 JVM이 기동할 때 생성이 되며 Garbege Collection의 대상이 단다.<br>
 Hotspot JVM 의 경우 Permanent Area 라는 명칭으로 특정 메모리 영역을 나타내며,<br>
 IBM JVM 의 경우 Heap 내에 Class Object 의 형태로 저장된다.<br>
-Type정보는 아래와 같이 7개의 정보로 구성이 된다.
+Method Area에 저장되는 Type정보는 아래와 같이 7개의 정보로 구성이 된다.
 - Type Information
 - Constant Pool
 - FieId Information
@@ -24,8 +26,7 @@ Type정보는 아래와 같이 7개의 정보로 구성이 된다.
 
 ### Type Information
 가장 기본이 되는 정보로 Type에 대한 전반적인 내용이 포함된다.
-
-  여기에서 Type은 Java Class나 Interface를 의미한다는 점
+  >여기에서 Type은 Java Class나 Interface를 의미한다는 점 기억하자.
 
 - Type의 전체 이름(Package명 + class명)
 - Type의 직계 superclass의 전체이름(Interface 이거나 Object class이거나 없는경우는 제외)
@@ -148,64 +149,63 @@ second header에는 Method Area의 class정보를 가르키는 reference정보�
 - 참조가 끊어진 Garbage Object 이면 잔류한다.
 - 모든 Live Object 가 Survivor 영역으로 넘어가면 Eden 영역을 청소(Scavenge) 한다.
 - Survivor 영역은 Eden 영역에서 살아남은 Object들이 잠시 기거하는 곳이다.
-- Old Generation 은 Object가 Allocation 되는 것이 아니라 Promotion된다.
-- 즉 앞으로도 계속 Heap에 머무를 확률이 높은 Object를 남겨놓게 된다.
+- Old Generation 은 Object가 Allocation 되는 것이 아니라 Promotion된다.<br>
+ (즉 새로 Heap에 생성되는 Object가 들어오는 것이 아니라 비교적 오랜 시간동안 참조 되고 이용되어 <br>
+   앞으로도 계속 Heap에 머무를 확률이 높은 Object를 남겨놓게 된다.)
 
 ![](assetc/2-5.png)<br>
 출처 [(주)엑셈](http://www.slideshare.net/novathinker/2-runtime-data-areas?qid=cf17e59d-856b-429c-9b7e-6f93b10f987e&v=&b=&from_search=1)
 
 
-
 ## Simulation
-
-배운거를 실습할 시간이다.
-
+배운거를 실습할 시간이다.<br>
 우선 java의 변수부터 구분지어 보도록 하자.
 - Class Variables
-- Menber Variables
+- Member Variables
 - Paramether Variables
 - Local Variables
 
 ### Class Variables
 Class Variables은 흔히 Static 변수라는 명칭으로 사용이 된다.<br>
 Static은 Class변수 이니 Class Variables은 Method Area에 할당 받는다.<br>
-당연히 모든 Thread에 의해 공유 받는다.<br>
+당연히 모든 Thread에 의해 공유 받는다.
 
-### Menber Variables
+### Member Variables
 Menber Variables은 Instance 변수라는 별명을 가지고 있다.<br>
 Menber Variables은 Instance에 속해있기 때문에 정확한 별명이라고 볼수 있다.<br>
-Instance는 Member Area를 바탕으로 Heap에 생성 된다.<br>
+Instance는 Member Area를 바탕으로 Heap에 생성 된다.
 
 ### Paramether Variables
 Paramether Variable은 Method의 인수를 의미한다.<br>
 변수의 정보는 Method Area의 Method Information 에 포함되고,<br>
-Paramether Variable은 JVM Stacks에 할당 된다.<br>
+Paramether Variable은 JVM Stacks에 할당 된다.
 
 ### Local Variables
 Local Variables은 Paramether Variables과 동일하다.<br>
-차이점은 Local Variables Method내에서  정의 된다는 것이다.<br>
+차이점은 Local Variables Method내에서  정의 된다는 것이다.
 
 ```java
 class VariableArrange {
   static int ci = 3;                // Class Variables
   static String cs = "Static";      // Class Variables
-  int mi = 4;                       // Menber Variables
-  String ms = "Menber";             // Menber Variables
+  int mi = 4;                       // Member Variables
+  String ms = "Member";             // Member Variables
 
   void method(int pi, String ps) {  // Paramether Variables
     int li = 5;                     // Local Variables
     String ls = "Local";            // Local Variables
   }
 }
-
 ```
 
 이 예제는 종류별로 두개씩 Primitive Type 과 Reference Type 으로 선언이 되어 있다.<br>
 그림으로 보면 아래와 같을 것이다.<br>
 ![](assetc/2-10.png)<br>
-Primitive Type인 int 대신 Interger를 사용 하였다면 어떠하엿겠는가?<br>
+Primitive Type인 int 대신 Interger를 사용 하였다면 어떠하였겠는가?<br>
 Class Variables 영역에 3이라는 값 대신 Reference로 대치되어 있을 것이고,<br>
-이 Reference는 Heap에 생성된 Interger class의 Instance를 가르키고 잇을 것이다.
+이 Reference는 Heap에 생성된 Interger class의 Instance를 가르키고 잇을 것이다.<br>
+
+>아직 잘 흐름이 눈에 안들어 온다고 해서 걱정하지 말아라. 이제 하나씩 천천히 흐름을 눈에 익혀보자.
 
 아래는 Test class의 메모리에 할당 되고 제거 되는 흐름을 나태내기 위한 예제이다.
 ```java
@@ -245,10 +245,9 @@ add method가 호출되면 stack frame에 할당되고, <br>
 ![](assetc/2-9-1.png)<br>
 
 JVM은 프로그램의 실행 순서에 따라 메서드에 해당하는 스택 프레임을 할당하고 해제하는 일을 반복한다.<br>
-즉 메서드가 호출되면 새로운 스택 프레임이 할당되어 사용되며,<br>
-메서드의 수행이 끝나고 반환될 때에는 스택에서 해당 메서드의 프레임을 제거하게된다.
+즉 메서드가 호출되면 새로운 스택 프레임이 할당되어 사용된 후 메서드의 수행이 끝나고 반환시에 스택에서 제거하게된다.<br>
+이런 흐름을 알았다면 이제 실습예제의 확장판을 살펴보자.
 
-이제 이 실습예제의 확장판을 살펴보자
 ```java
 class JvmInternal {
   static int cv = 0;
@@ -256,8 +255,8 @@ class JvmInternal {
 
   public static void main(String[] args) {
     int a, b, c;
-    a = interger.parseInt(args[0]);
-    b = interger.parseInt(args[1]);
+    a = integer.parseInt(args[0]);
+    b = integer.parseInt(args[1]);
     c = addTwoArgs(a,b);
   }
 
@@ -269,64 +268,65 @@ class JvmInternal {
 ```
 
 위의 실습 예제를 수행하기 위해서는 우선 ClassLoader에 의해 로딩 과정이 일어날 것이다.
-class가 로딩되면
+class가 로딩되면서 일어나는 일들을 살펴보면
 1. Method Area에 class정보가 올라간후
 2. Heap에 JvmInternal Instance가 하나 생성이 될것이다.
 3. Java Stack에서는 이를 수행하기 위한 Stack Frame이 생성이 된다.<br>
 
-이와 같은 과정이 일어 난후 까지는 아래와 같다.
-
 ![](assetc/2-11.png)<br>
-여기에서 살펴봐야 할점은 tatic으로 선언한 cv의 값은 Class Variables에 집어넣어져 있지만,<br>
+여기에서 살펴봐야 할점은 static 으로 선언한 cv의 값은 Class Variables에 들어가 있지만,<br>
 final static으로 선언한 fcv는 상수화 되어 버리기 때문에 Constant Pool에 들어가 있다는 점이다.
 
 이제 적재된 JvmInternal의 main() 메소드를 실행할 차례이다.<br>
 1. main() method가 실행이 되면 이 method에 해당하는 Java Stack에 새로운 Stack Frame이 생성 된다.<br>
-2. method가 실행이 되면서 args[] Reference 데이터를 그대로 넘겨 준다.
+2. method가 실행이 되면서 args[] Reference 데이터를 그대로 넘겨 준다.<br>
 3. Stack Frame이 크가가 다른 이유는 생성되는 method의 정보를 바탕으로 생성이 되기 때문이다.
 
 ![](assetc/2-12.png)<br>
 
 이제 main() method를 생성하고 실제 작업에 들어가 보도록 하자.
-1. 가정먼저 수행되는 부분은 Local Variable인 a,b,c를 선언한다.
+1. 가정먼저 수행되는 부분은 Local Variable인 a,b,c를 선언한다.<br>
 2. method의 parameter로 제공되는 args[0]의 값을 String -> int로 변형하여 저장하는 과정이다.
 
 ```java
-  a = interger.parseInt(args[0]);
+  a = integer.parseInt(args[0]);
 ```
 ![](assetc/2-13.png)<br>
 
 이제 parseInt의 Method Parameter가 마련되었다.
-1. Interger객체를 찾아 parseInt() Method를 수행한다.
+1. Integer객체를 찾아 parseInt() Method를 수행한다.<br>
 2. operand stack의 값 '10'이 parseInt()를 통하여 10 으로 변경이 되고 Local Variable Section의 1번 인덱스에 저장된다.
 
 ![](assetc/2-14.png)<br>
 
 b 도 동일한 과정을 거쳐서 Local Variable 2번 인덱스에 저장이 된다.<br>
-그 다음 과정은 addTwoArgs 이다.
+그 다음 과정은 addTwoArgs() method 이다.
 ```java
   c = addTwoArgs(a,b);
 ```
 a,b는 이미 Local Variable에 들어가 있는 변수 a,b의 값을 인자로 받는 형태이기 때문이다.
-1. Local Variable에 저장되어 있는 a,b를 Operand stack으로 옮겨준다.
-2. 이 값들을 인수로 하여 addTwoArgs() method를 호출해 준다.
+1. Local Variable에 저장되어 있는 a,b를 Operand stack으로 옮겨준다.<br>
+2. 이 값들을 인수로 하여 addTwoArgs() method를 호출해 준다.<br>
 3. addTwoArgs() method의 Stack Frame이 Push된다.
 
 ![](assetc/2-15.png)<br>
 
 이제 addTwoArgs() method의 cv = fcv 의 연산을 표현한 것이다. (p75)
-1. fcv의 값을 Frame Data의 fcv주소를 통하여 접근한다.
-2. 이 값을 Operand stack으로 Pop하여 저장한다.
+1. fcv의 값을 Frame Data의 fcv주소를 통하여 접근한다.<br>
+2. 이 값을 Operand stack으로 Pop하여 저장한다.<br>
 3. Thread는 Class Variable의 cv로 접근하여 100이라는 값을 얻어 변경한다.
 
 ![](assetc/2-16.png)<br>
 
 이번 작업은 인수로 넘어온 x,y를 더하여 반환하는 작업을 할 차례이다.
-1. Local Variable에서 인덱스를 통하여 Operand stack으로 Push한다.
-2. 이 두 값을 Pop하여 iadd를 통하여 연산해 준후 결과값을 Operand stack에 다시 Push한다.
-3. ireturn으로 반환값 반환 -> main()의 Operand stack으로 Push된다.
-4. addTwoArgs() method의 Stack Frame에서의 작업이 완료 되었으므로 Java Stack에서 사라진다.
+1. Local Variable에서 인덱스를 통하여 Operand stack으로 Push한다.<br>
+2. 이 두 값을 Pop하여 iadd를 통하여 연산해 준후 결과값을 Operand stack에 다시 Push한다.<br>
+3. return으로 반환값 반환 -> main()의 Operand stack으로 Push된다.<br>
+4. addTwoArgs() method의 Stack Frame에서의 작업이 완료 되었으므로 Java Stack에서 사라진다.<br>
 5. 이제 addTwoArgs() 반환값을 Pop하여 Local Variable 3번째 인덱스로 Push한다.
+
+>iadd : int형의 값을 더함. Operand Stack 값들이 모두 Pop되어 연산에 사용. 결과를 Push
+>return : Method의 수행을 마치고 Stack Fraem을 나감
 
 ![](assetc/2-17.png)<br>
 ![](assetc/2-18.png)<br>
