@@ -325,7 +325,7 @@ a,b는 이미 Local Variable에 들어가 있는 변수 a,b의 값을 인자로 
 4. addTwoArgs() method의 Stack Frame에서의 작업이 완료 되었으므로 Java Stack에서 사라진다.<br>
 5. 이제 addTwoArgs() 반환값을 Pop하여 Local Variable 3번째 인덱스로 Push한다.
 
->iadd : int형의 값을 더함. Operand Stack 값들이 모두 Pop되어 연산에 사용. 결과를 Push
+>iadd : int형의 값을 더함. Operand Stack 값들이 모두 Pop되어 연산에 사용. 결과를 Push <br>
 >return : Method의 수행을 마치고 Stack Fraem을 나감
 
 ![](assetc/2-17.png)<br>
