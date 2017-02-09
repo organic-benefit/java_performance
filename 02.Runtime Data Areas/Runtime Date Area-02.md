@@ -267,7 +267,7 @@ class JvmInternal {
 }
 ```
 
-위의 실습 예제를 수행하기 위해서는 우선 ClassLoader에 의해 로딩 과정이 일어날 것이다.
+위의 실습 예제를 수행하기 위해서는 우선 ClassLoader에 의해 로딩 과정이 일어날 것이다.<br>
 class가 로딩되면서 일어나는 일들을 살펴보면<br>
 1. Method Area에 class정보가 올라간후<br>
 2. Heap에 JvmInternal Instance가 하나 생성이 될것이다.<br>
@@ -333,4 +333,4 @@ a,b는 이미 Local Variable에 들어가 있는 변수 a,b의 값을 인자로 
 
 ## 마치며
 지금까지 Runtime Data Areas에 대해 알아 보았다.<br>
-기초 지식을 기반으로 JVM 동작을 이해하고,성능을 향상시키는 (불필요한 Reference) 프로그래머가 되도록 노력 하자.
+기초 지식을 기반으로 JVM 동작을 이해하고 내가 작성하고 있는 이 코드가 어떤 흐름으로 동작하는지 알고 있는 programer가 되자.
