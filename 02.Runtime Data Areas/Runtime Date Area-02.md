@@ -268,9 +268,9 @@ class JvmInternal {
 ```
 
 위의 실습 예제를 수행하기 위해서는 우선 ClassLoader에 의해 로딩 과정이 일어날 것이다.
-class가 로딩되면서 일어나는 일들을 살펴보면
-1. Method Area에 class정보가 올라간후
-2. Heap에 JvmInternal Instance가 하나 생성이 될것이다.
+class가 로딩되면서 일어나는 일들을 살펴보면<br>
+1. Method Area에 class정보가 올라간후<br>
+2. Heap에 JvmInternal Instance가 하나 생성이 될것이다.<br>
 3. Java Stack에서는 이를 수행하기 위한 Stack Frame이 생성이 된다.<br>
 
 ![](assetc/2-11.png)<br>
@@ -284,7 +284,7 @@ final static으로 선언한 fcv는 상수화 되어 버리기 때문에 Constan
 
 ![](assetc/2-12.png)<br>
 
-이제 main() method를 생성하고 실제 작업에 들어가 보도록 하자.
+이제 main() method를 생성하고 실제 작업에 들어가 보도록 하자.<br>
 1. 가정먼저 수행되는 부분은 Local Variable인 a,b,c를 선언한다.<br>
 2. method의 parameter로 제공되는 args[0]의 값을 String -> int로 변형하여 저장하는 과정이다.
 
@@ -293,7 +293,7 @@ final static으로 선언한 fcv는 상수화 되어 버리기 때문에 Constan
 ```
 ![](assetc/2-13.png)<br>
 
-이제 parseInt의 Method Parameter가 마련되었다.
+이제 parseInt의 Method Parameter가 마련되었다.<br>
 1. Integer객체를 찾아 parseInt() Method를 수행한다.<br>
 2. operand stack의 값 '10'이 parseInt()를 통하여 10 으로 변경이 되고 Local Variable Section의 1번 인덱스에 저장된다.
 
@@ -304,21 +304,21 @@ b 도 동일한 과정을 거쳐서 Local Variable 2번 인덱스에 저장이 �
 ```java
   c = addTwoArgs(a,b);
 ```
-a,b는 이미 Local Variable에 들어가 있는 변수 a,b의 값을 인자로 받는 형태이기 때문이다.
+a,b는 이미 Local Variable에 들어가 있는 변수 a,b의 값을 인자로 받는 형태이기 때문이다.<br>
 1. Local Variable에 저장되어 있는 a,b를 Operand stack으로 옮겨준다.<br>
 2. 이 값들을 인수로 하여 addTwoArgs() method를 호출해 준다.<br>
 3. addTwoArgs() method의 Stack Frame이 Push된다.
 
 ![](assetc/2-15.png)<br>
 
-이제 addTwoArgs() method의 cv = fcv 의 연산을 표현한 것이다. (p75)
+이제 addTwoArgs() method의 cv = fcv 의 연산을 표현한 것이다. (p75)<br>
 1. fcv의 값을 Frame Data의 fcv주소를 통하여 접근한다.<br>
 2. 이 값을 Operand stack으로 Pop하여 저장한다.<br>
 3. Thread는 Class Variable의 cv로 접근하여 100이라는 값을 얻어 변경한다.
 
 ![](assetc/2-16.png)<br>
 
-이번 작업은 인수로 넘어온 x,y를 더하여 반환하는 작업을 할 차례이다.
+이번 작업은 인수로 넘어온 x,y를 더하여 반환하는 작업을 할 차례이다.<br>
 1. Local Variable에서 인덱스를 통하여 Operand stack으로 Push한다.<br>
 2. 이 두 값을 Pop하여 iadd를 통하여 연산해 준후 결과값을 Operand stack에 다시 Push한다.<br>
 3. return으로 반환값 반환 -> main()의 Operand stack으로 Push된다.<br>
@@ -332,5 +332,5 @@ a,b는 이미 Local Variable에 들어가 있는 변수 a,b의 값을 인자로 
 ![](assetc/2-18.png)<br>
 
 ## 마치며
-지금까지 Runtime Data Areas에 대해 알아 보았다.
+지금까지 Runtime Data Areas에 대해 알아 보았다.<br>
 기초 지식을 기반으로 JVM 동작을 이해하고,성능을 향상시키는 (불필요한 Reference) 프로그래머가 되도록 노력 하자.
