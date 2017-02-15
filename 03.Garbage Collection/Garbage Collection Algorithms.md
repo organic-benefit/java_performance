@@ -171,7 +171,7 @@ class Leak {
 <br>
 
 :Compaction 방식
-- Arbirary : 무작위 방식
+- Arbitrary : 무작위 방식
 - Lenear : 메모리 참조 순서
 - Sliding : 메모리 할당 순서
 
