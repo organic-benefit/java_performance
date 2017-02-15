@@ -256,7 +256,7 @@ class Leak {
 - 특정 Algorithm이 아님
 - Heap의 현재 상황에 맞게 적절한 Algorithm을 적용하는 것 또는 Heap Sizing을 자동화하는 방법
 - Hotspot JVM : Ergonomics, Adaptive Option
-- IBM JVM : Tiling
+- IBM JVM : Tilting
 
 <br>
 <br>
