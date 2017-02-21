@@ -1,59 +1,60 @@
 # Hotspot JVM
 
-### 기본 구조 및 Hotspot의 특징
-
+### Hotspot JVM의 기본 구조
 * **Hotspot JVM의 Heap 구조**
     * Object의 할당순서 : Eden -> Survivor -> Old generation
     * GC의 대상 : Eden, Survivor, Tenured
-![Hotspot Heap structure](./img/Hotspot Heap Structure.PNG)
+![Hotspot Heap structure](./img/Hotspot Heap Structure.png)
     * http://www.javaworld.com/article/2073905/build-ci-sdlc/pick-up-performance-with-generational-garbage-collection.html
 
+
+### Hotspot JVM의 특징
 * **1) Young Generation 영역의 Fast Allocation**
-    * Bumpt the Pointer : 할당된 메모리의 바로 뒤에 메모리를 할당
+    * Bump the Pointer : 할당된 메모리의 바로 뒤에 메모리를 할당
     * TLAB : 쓰레드마다 할당을 위한 주소의 범위를 부여
     ![Fast Allocation and TLAB](./img/Fast Allocation and TLAB.jpg)
-      > ** TLAB의 장단점 ** <br>
-      > 장점 : 멀티쓰레드 메모리 할당 과정에서의 Lock 및 Wait 이슈 없이 할당 가능 <br>
-      > 단점 : Thread에게 영역을 최초로 할당하거나, TLAB이 부족하여 새로 할당을 할 시에는 동기화 이슈 발생. 하지만 전체적으로는 Object Allocation에 비해 더 짧은 시간 내 수행 <br>
+    * TLAB의 장단점
+      * 장점 : 멀티쓰레드 메모리 할당 과정에서의 Lock 및 Wait 이슈 없이 할당 가능 <br>
+      * 단점 : Thread에게 영역을 최초로 할당하거나, TLAB이 부족하여 새로 할당을 할 시에는 동기화 이슈 발생. 하지만 전체적으로는 Object Allocation에 비해 더 짧은 시간 내 수행 <br>
 
 * **2) Weak Generational Hypothesis**
     * Heap을 Young, Old Generation으로 나누어 구성하는 이유
-    * Generational Algorithm
+    * Generational Algorithm의 기본 가설
     * 경험적 지식과 가설에 기반함
-      1. *높은 유아사망률* : Object는 새로 생성된 후 얼마 되지 않아 Garbage가 되며, 새로 할당된 Object가 모인 곳은 Fragmentation 확률이 높다.
-      2. *Old Object가 Young Object를 참조하는 일은 적다* : 이 경우가 많다면 RootSet에서 참조관계를 Marking할때의 JVM suspend 상태가 길어진다.
+      1. **높은 유아사망률** : Object는 새로 생성된 후 얼마 되지 않아 Garbage가 되며, 새로 할당된 Object가 모인 곳은 Fragmentation 확률이 높다.
+      2. **Old Object가 Young Object를 참조하는 일은 적다** : 이 경우가 많다면 RootSet에서 참조관계를 Marking할때의 JVM suspend 상태가 길어진다.
 
 * **3) Old Generation GC Algorighm**
     * Old Object가 Young Object를 참조하는 일은 드물지만 발생한다.
     * Hotspot JVM은 **Card Table / Write Barrier** 를 사용
     ![Card Table and Heap](./img/Card Table and Heap.png)
-    > **Card Table** : Old generatino 메모리를 대표하는 별도의 메모리. Reference가 있을시 dirty로 표기 <br>
-    > **Write Barrier** : Old Object가 Young Object로 reference가 생길 때 실행되어, card에 dirty를 표시하거나 지우는 작업을 수행 <br>
+      * **Card Table** : Old generatino 메모리를 대표하는 별도의 메모리. Reference가 있을시 dirty로 표기 <br>
+      * **Write Barrier** : Old Object가 Young Object로 reference가 생길 때 실행되어, card에 dirty를 표시하거나 지우는 작업을 수행 <br>
     * Minor GC 도중의 Old->Young의 참조 정보는 Card Table의 Dirty만 검색하면 됨
 
 * **4) Application별 GC 별도 적용**
     * Server / Client Application을 나누어 각각에 적합하게 GC 수행
     * 하드웨어와 OS 기준으로 자동으로 구분
-    * 각각의 경우에 맞도록 **Collector 및 Compiler**를 자동 선택하나, 옵션을 통해 조정가능
+    * 각각의 경우에 맞도록 **Collector 및 Compiler** 를 자동 선택하나, 옵션을 통해 조정가능
     * **Server** : 대용량의 Heap을 사용하여 처리량이 많은 application 패턴 처리
-      > 2개 이상의 CPU, 2GB 이상의 메모리, 32bit 윈도우 제외 <br>
-      > Parallel Collector, Server Runtime Compiler <br>
-      > Initial Heap Size : 1/64 * physical memory (~1GB), 32MB(1GB~) <br>
-      > Max Heap Size : 1/4 * physical memory (~1GB) <br>
-      > http://docs.oracle.com/javase/7/docs/technotes/guides/vm/ <br>
-      > http://docs.oracle.com/javase/7/docs/technotes/guides/vm/server-class.html
+      * 2개 이상의 CPU, 2GB 이상의 메모리, 32bit 윈도우 제외
+      * Parallel Collector, Server Runtime Compiler
+      * Initial Heap Size : 1/64 * physical memory (~1GB), 32MB(1GB~)
+      * Max Heap Size : 1/4 * physical memory (~1GB)
+      * http://docs.oracle.com/javase/7/docs/technotes/guides/vm/
+      * http://docs.oracle.com/javase/7/docs/technotes/guides/vm/server-class.html
     * **Client** : 적은 Heap과 실시간성 application 패턴의 GC 및 Heap Sizing 처리
-      > 서버로 분류되지 않는 경우 <br>
-      > Serial Collector, Client Runtime Compiler
-      > Initial Heap Size : 4MB <br>
-      > Max Heap Size : 64MB
+      * 서버로 분류되지 않는 경우
+      * Serial Collector, Client Runtime Compiler
+      * Initial Heap Size : 4MB
+      * Max Heap Size : 64MB
 
 ### Hotspot JVM의 Garbage Collection
   * **Minor GC**
-    * Young Generation의 Garbage Collection
+    * **Young Generation** 의 Garbage Collection
     * Object 할당 과정 중 메모리 압박이 생겼을 때 수행
   * **Major GC(=Full GC)**
-    * Old Generation의 Garbage Collection
+    * **Old Generation** 의 Garbage Collection
     * Object의 Promotion 과정 중, Old 영역의 메모리 압박이 생겼을 때 수행
     * Permanent Area의 메모리 압박 발생 시에도 수행
       * Heap에 메모리 공간이 충분하더라도, 너무 많은 Class Object가 로딩될 때 수행된다.
@@ -63,10 +64,10 @@
     * Application의 불필요한 작업으로 인한 GC와, 어울리지 않는 collector나 heap sizing이 문제가 될 수 있다
 
 
+
 ## Hostpot JVM의 Option
 
 ### Hotspot JVM의 option의 종류
-
   * Standard Option
     * 모든 JVM 공통
     * Option 앞에 '-'만 붙는 것
@@ -78,11 +79,10 @@
       * Macro 한 부분 제어 (큰, 전체적인 부분)
     * '-XX' 옵션
       * Micro 한 부분 제어
-      ![Hotspot JVM XX option](./img/Hotspot JVM XX Option.png)
+      * ![Hotspot JVM XX option](./img/Hotspot JVM XX Option.png)
 
 ### Hotspot JVM의 Heap Sizing Option
-![Heap Sizing options](./img/Heap Sizing options.png)
-
+  * ![Heap Sizing options](./img/Heap Sizing options.png)
 
 
 ## Hotspot JVM의 Garbage Collector
@@ -97,7 +97,7 @@
   * **Serial Collector**
     * Hotspot JVM의 가장 기본적인 collector.
     * IT의 발전으로 Heap 사이즈가 점점 커지며 한계가 드러남
-    * ex) Heap이 커질수록 늘어나는 suspend 현상
+      * ex) Heap이 커질수록 늘어나는 suspend 현상
     * 두 가지 전략으로 분화
       * 1) 모든 리소스를 투입하여 빨리 끝내자 : 병렬(Parallel) 방법 채택
       * 2) suspend를 분산시켜 체감을 줄이자 : 실시간 application에 맞음. GC 동시에 app 작업도 수행
@@ -120,7 +120,7 @@
   * Young, Old GC 전부를 serial하게 싱글CPU를 사용하여 처리 (=1개의 쓰레드로 GC 수행)
   * Client Class의 기본 collector
   * **Minor GC의 수행과정** (Young Generation - Generational Algorithm)
-    * Young이 꽉 참 -> JVM Suspend -> Object Mark -> Collection -> Promotion -> Scavenge -> suspend 해제
+    * Young이 꽉 참 -> JVM Suspend -> **Object Mark -> Collection -> Promotion -> Scavenge** -> suspend 해제
     * ![1. Serial Collector Minor GC](./img/1. Serial Collector Minor GC.jpg)
     * http://www.slideshare.net/novathinker/3-garbage-collection (111p)
     * Survivor 영역(To-From)은 논리적인 영역으로, minor GC때마다 서로 바뀐다.
@@ -130,7 +130,7 @@
     * ![2. Serial Collector Minor GC2](./img/2. Serial Collector Minor GC2.jpg)
   * **Full GC의 수행과정** (Old Generation : Mark-and-Compacting Algorithm)
     * Mark Phase, Sweep Phase 2가지로 진행
-    * Promotion 수행 -> 공간부족 -> Suspend -> Object Mark -> Object Sweep -> Object Compaction -> Suspend 해제
+    * Promotion 수행 -> 공간부족 -> Suspend -> **Object Mark -> Object Sweep -> Object Compaction** -> Suspend 해제
     * ![3. Serial Collector Old Generation GC](./img/3. Serial Collector Old Generation GC.jpg)
     * http://www.slideshare.net/novathinker/3-garbage-collection (116p)
 
@@ -259,3 +259,13 @@
   * **Full GC**
     * ![G1 Full GC](./img/G1 Full GC.png)
     * http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
+
+### 참고 url
+  * Garbage Collector : http://www.slideshare.net/novathinker/3-garbage-collection
+  * Oracle Tutorial(G1 Collector) : http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
+  * Oracle JAVA 8 GC Tuning Guide : https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/toc.html
+  * NAVER D2 Garbage Collector : http://d2.naver.com/helloworld/1329
+  * Oracle Hotspot JVM options : http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html
+  * Oracle JAVA Garbage Collection basics : http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html
+  * Oracle Start G1 Garbage Collector : http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
+  * Oracle JAVA Virtual Machine Technology : http://docs.oracle.com/javase/7/docs/technotes/guides/vm/
