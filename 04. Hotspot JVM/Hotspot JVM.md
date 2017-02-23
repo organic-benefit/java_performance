@@ -258,7 +258,7 @@
     * suspend를 해당 region을 사용하는 쓰레드만으로 제한할 수 있음
   * **Full GC**
     * ![G1 Full GC](./img/G1 Full GC.png)
-    * http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
+    * G1 Old Generation Collection Step by Step : http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
 
 ### 참고 url
   * Garbage Collector : http://www.slideshare.net/novathinker/3-garbage-collection
