@@ -260,6 +260,31 @@
     * ![G1 Full GC](./img/G1 Full GC.png)
     * G1 Old Generation Collection Step by Step : http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
 
+
+### 결론 : 어떤 Garbage Collector를 사용할 것인가?
+  * http://blog.takipi.com/garbage-collectors-serial-vs-parallel-vs-cms-vs-the-g1-and-whats-new-in-java-8/
+  * Serial Collector
+    * 싱글 쓰레드 환경, 작은 heap size.
+    * GC시마다 프로그램이 정지되므로, 서버 환경에는 적합하지 않음
+  * Parallel Collector
+    * 멀티 쓰레드를 사용하여 heap을 검사하고 압축
+    * 병렬로 동작하나, 마찬가지로 stop-the-world 발생
+    * application의 일시 중지가 허용될 경우 가장 적합함
+  * CMS Collector
+    * 가장 큰 문제는 promotion이 실패하는 경우 (young, old collection 의 충돌)
+    * promotion 공간이 충분하지 않을 경우 stop-the-world로 Full GC를 수행해야 함.
+    * Parallel에 비해, scan-collecting을 위해 더 많은 CPU를 사용한다.
+    * For most long-running server applications which are adverse to application freezes, that’s usually a good trade off to make.
+    * application에 악영향을 미치는 대부분의 long-running server application의 경우, 유용하다
+    * 위 경우, CPU 사용량이 많아지더라도 CMS collector 사용하는게 이득이다... 라는 의미인 듯
+    * heap이 4GB보다 작을 떄 좋으며 그보다 큰 경우는 G1이 더 낫다
+  * G1 Collector
+    * 4GB보다 heap이 큰 경우 더 잘 지원하도록 설계되었음
+    * JAVA8에서는 String 중복제거 collecting을 위한 새로운 최적화가 추가되었음. (동일한 문자열이 힙 내에 여러군데 존재하지 않도록)
+  * 기타 참고자료
+    * G1 vs CMS : https://plumbr.eu/blog/garbage-collection/g1-vs-cms-vs-parallel-gc
+    * JAVA8 collecting 벤치마크 : https://www.optaplanner.org/blog/2015/07/31/WhatIsTheFastestGarbageCollectorInJava8.html
+
 ### 참고 url
   * Garbage Collector : http://www.slideshare.net/novathinker/3-garbage-collection
   * Oracle Tutorial(G1 Collector) : http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
