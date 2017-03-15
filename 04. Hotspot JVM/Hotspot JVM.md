@@ -4,7 +4,7 @@
 * **Hotspot JVM의 Heap 구조**
     * Object의 할당순서 : Eden -> Survivor -> Old generation
     * GC의 대상 : Eden, Survivor, Tenured
-![Hotspot Heap structure](./img/Hotspot Heap Structure.png)
+![Hotspot Heap structure](./img/Hotspot%20Heap%20Structure.png)
     * http://www.javaworld.com/article/2073905/build-ci-sdlc/pick-up-performance-with-generational-garbage-collection.html
 
 
@@ -12,7 +12,7 @@
 * **1) Young Generation 영역의 Fast Allocation**
     * Bump the Pointer : 할당된 메모리의 바로 뒤에 메모리를 할당
     * TLAB : 쓰레드마다 할당을 위한 주소의 범위를 부여
-    ![Fast Allocation and TLAB](./img/Fast Allocation and TLAB.jpg)
+    ![Fast Allocation and TLAB](./img/Fast%20Allocation%20and%20TLAB.jpg)
     * TLAB의 장단점
       * 장점 : 멀티쓰레드 메모리 할당 과정에서의 Lock 및 Wait 이슈 없이 할당 가능 <br>
       * 단점 : Thread에게 영역을 최초로 할당하거나, TLAB이 부족하여 새로 할당을 할 시에는 동기화 이슈 발생. 하지만 전체적으로는 Object Allocation에 비해 더 짧은 시간 내 수행 <br>
@@ -27,7 +27,7 @@
 * **3) Old Generation GC Algorighm**
     * Old Object가 Young Object를 참조하는 일은 드물지만 발생한다.
     * Hotspot JVM은 **Card Table / Write Barrier** 를 사용
-    ![Card Table and Heap](./img/Card Table and Heap.png)
+    ![Card Table and Heap](./img/Card%20Table%20and%20Heap.png)
       * **Card Table** : Old generatino 메모리를 대표하는 별도의 메모리. Reference가 있을시 dirty로 표기 <br>
       * **Write Barrier** : Old Object가 Young Object로 reference가 생길 때 실행되어, card에 dirty를 표시하거나 지우는 작업을 수행 <br>
     * Minor GC 도중의 Old->Young의 참조 정보는 Card Table의 Dirty만 검색하면 됨
@@ -79,10 +79,10 @@
       * Macro 한 부분 제어 (큰, 전체적인 부분)
     * '-XX' 옵션
       * Micro 한 부분 제어
-      * ![Hotspot JVM XX option](./img/Hotspot JVM XX Option.png)
+      * ![Hotspot JVM XX option](./img/Hotspot%20JVM%20XX%20Option.png)
 
 ### Hotspot JVM의 Heap Sizing Option
-  * ![Heap Sizing options](./img/Heap Sizing options.png)
+  * ![Heap Sizing options](./img/Heap%20Sizing%20options.png)
 
 
 ## Hotspot JVM의 Garbage Collector
@@ -91,7 +91,7 @@
   * Hostpot JVM에서 Garbage Collector를 이용하는 것은 Garbage Collection 자체를 이해하는 것이다.
   * GC를 최적화 한다는 것은, 적절한 Garbage Collector를 선택하는 것 이외에 방법이 없다.
   * Hostpot JVM Garbage Collector의 종류
-  ![Hotspot JVM Garbage Collector](./img/Hotspot JVM Garbage Collector.png)
+  ![Hotspot JVM Garbage Collector](./img/Hotspot%20JVM%20Garbage%20Collector.png)
 
 ### Garbage Collector 훝어보기
   * **Serial Collector**
@@ -121,17 +121,17 @@
   * Client Class의 기본 collector
   * **Minor GC의 수행과정** (Young Generation - Generational Algorithm)
     * Young이 꽉 참 -> JVM Suspend -> **Object Mark -> Collection -> Promotion -> Scavenge** -> suspend 해제
-    * ![1. Serial Collector Minor GC](./img/1. Serial Collector Minor GC.jpg)
+    * ![1. Serial Collector Minor GC](./img/1.%20Serial%20Collector%20Minor%20GC.jpg)
     * http://www.slideshare.net/novathinker/3-garbage-collection (111p)
     * Survivor 영역(To-From)은 논리적인 영역으로, minor GC때마다 서로 바뀐다.
     * Object는 Survivor 영역(To-From)을 이동하며, header에 age를 기록한다.
     * 설정한 횟수 이상으로 이동하기 전까지 Young 영역에 남아있게 됨.
     * Object의 age Header는 6bit이므로, 최대 31까지 가능.
-    * ![2. Serial Collector Minor GC2](./img/2. Serial Collector Minor GC2.jpg)
+    * ![2. Serial Collector Minor GC2](./img/2.%20Serial%20Collector%20Minor%20GC2.jpg)
   * **Full GC의 수행과정** (Old Generation : Mark-and-Compacting Algorithm)
     * Mark Phase, Sweep Phase 2가지로 진행
     * Promotion 수행 -> 공간부족 -> Suspend -> **Object Mark -> Object Sweep -> Object Compaction** -> Suspend 해제
-    * ![3. Serial Collector Old Generation GC](./img/3. Serial Collector Old Generation GC.jpg)
+    * ![3. Serial Collector Old Generation GC](./img/3.%20Serial%20Collector%20Old%20Generation%20GC.jpg)
     * http://www.slideshare.net/novathinker/3-garbage-collection (116p)
 
 ### Incremental Collector
@@ -143,7 +143,7 @@
     * Minor GC 발생시마다 연속해서 수행됨.
     * Train algorithm 자체가 copy를 전제로 하므로, GC도중 옮겨놓을 메모리가 필요함.
     * GC 과정에서 OutOfMemory 발생시 Mark-and-Compaction Algorithm으로 전환하여 처리
-    * ![4. Incremental Collection Memory Block](./img/4. Incremental Collection Memory Block.jpg)
+    * ![4. Incremental Collection Memory Block](./img/4.%20Incremental%20Collection%20Memory%20Block.jpg)
     * JAVA6에서부터 사라짐
       * 각 블록을 가득 차게 쓰기 힘들기 때문에, Fragmentation 현상이 많음.
       * Memory Block을 선택하는 과정이 Overhead
@@ -155,10 +155,10 @@
   * 싱글 CPU 환경에서는 자동으로 Serial Collector로 전환되어 동작
   * **Minor GC의 수행과정** (Parallel Copy)
     * Generational Algorithm과 동일하나, 여러 Thread가 동시에 수행하여 suspend 시간 단축
-    * ![5. Serial Collector vs Parallel Collector](./img/5. Serial Collector vs Parallel Collector.jpg)
+    * ![5. Serial Collector vs Parallel Collector](./img/5.%20Serial%20Collector%20vs%20Parallel%20Collector.jpg)
     * 여러 Thread 접근시의 동기화 문제가 발생 가능. 이 경우 Promotion의 성능이 하락.
     * Hotspot JVM은 이를 위해 PLAB(Parallel Local Allocation Buffer)이라는 Promotion Buffer를 적용
-    * ![6. Promotion Buffer](./img/6. Promotion Buffer.jpg)
+    * ![6. Promotion Buffer](./img/6.%20Promotion%20Buffer.jpg)
     * Promotion 시에 배타적으로 사용하기 위해, Thread마다 Old 영역의 일정 부분을 할당해 놓는 작업
     * Thread가 할당받은 Buffer를 사용하지 않거나, 자투리 공간이 발생할 경우 Fragmentation 문제가 생길 수 있다.
     * PLAB vs TLAB
@@ -176,8 +176,8 @@
     * Parallel Collector와 동일
   * **Full GC의 수행과정** (Concurrent Mark-Sweep Algorithm)
     * 4개의 단계로 구성
-    * ![CMS Collector1](./img/CMS Collector1.png)
-    * ![CMS Collector Sweep](./img/CMS Collector Sweep.jpg)
+    * ![CMS Collector1](./img/CMS%20Collector1.png)
+    * ![CMS Collector Sweep](./img/CMS%20Collector%20Sweep.jpg)
   * **Freelist**
     * Promotion 과정에서의 Fragmentation 방지
     * 1) Young Generation에서 Promotion된 Object와 비슷한 크기의 Free Space 탐색
@@ -191,7 +191,7 @@
   * **Floating Garbage**
     * Garbage면서 수거되지 않은 Garbage
     * Concurrent Mark 단계에서 Promotion되어 Garbage가 된 Object
-    * ![7. Floating Garbage](./img/7. Floating Garbage.jpg)
+    * ![7. Floating Garbage](./img/7.%20Floating%20Garbage.jpg)
     * 다음 번 GC때 처리되나, GC 완료 시점에 처리가 완벽하게 되지 않는다.
     * Heap Memory(Old Generation) 영역의 확장으로 이어짐
   * **Scheduling**
@@ -208,13 +208,13 @@
     * Parallel Collector, CMS Collector 와 동일
   * **Full GC의 수행과정** (Parallel Compaction Algorithm)
     * Mark, Summary, Compaction 3 단계로 진행
-    * ![Parallel Compaction Algorithm](./img/Parallel Compaction Algorithm.png)
+    * ![Parallel Compaction Algorithm](./img/Parallel%20Compaction%20Algorithm.png)
   * **1) Mark Phase**
     * Parellel로 수행
     * Old Generation을 Region이라는 단위로 균일하게 나눔
     * Thread는 각 Region별로 Live Object를 마킹
     * 마킹 시점에 Live Object의 사이즈, 위치 등의 정보 갱신 => Rgion별 통계를 낼 때 사용
-    * ![8. Parallel Compaction - Mark Phase](./img/8. Parallel Compaction - Mark Phase.jpg)
+    * ![8. Parallel Compaction - Mark Phase](./img/8.%20Parallel%20Compaction%20-%20Mark%20Phase.jpg)
   * **2) Summary Phase**
     * Single Thread로 동작하지만, 그 외는 Application 수행
     * Mark단계의 결과를 대상으로 처리하므로 한 쓰레드만 처리가 가능
@@ -224,13 +224,13 @@
       * 정해진 Dense Prefix의 좌측은 GC에서 제외되고, 나머지만 Compaction (Sliding Compaction)
       * 오랜 기간 참조되는 Object는 좌측에 집중되므로 gabage가 되지 않을 확률이 높다
     * Dense Prefix 설정 후, Compaction 대상이 되는 Region의 첫 주소를 찾아 저장하고 phase 종료.
-    * ![9. Parallel Compaction - Summary Phase](./img/9. Parallel Compaction - Summary Phase.jpg)
+    * ![9. Parallel Compaction - Summary Phase](./img/9.%20Parallel%20Compaction%20-%20Summary Phase.jpg)
   * **3) Compaction Phase**
     * Heap Suspend. 모든 Thread가 Region을 할당받아 작업 수행
     * Garbage의 Sweep 처리 (Reachable Object를 왼편으로)
       * Dense 이후의 Region을 Destination, Source를 구분하여 작업 수행
       * Live Object를 어디에서 어디로 옮길 것인지 판단
-    * ![10. Parallel Compaction - Compaction Phase](./img/10. Parallel Compaction - Compaction Phase.jpg)
+    * ![10. Parallel Compaction - Compaction Phase](./img/10.%20Parallel%20Compaction%20-%20Compaction Phase.jpg)
 
 ### Garbage First Collector
   * JAVA 6 Update 14에 포함. 가장 최신의 Collector
@@ -243,7 +243,7 @@
     * Young Generation : Object가 새로 Allocation되는 Region의 집합
     * Old Generation : Object가 Promotion되는 Region의 집합
   * **전체 Flow**
-    * ![11. G1 Collector](./img/11. G1 Collector.jpg)
+    * ![11. G1 Collector](./img/11.%20G1%20Collector.jpg)
     * G1 Garbage Collector Step by Step
       * http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
   * **Minor GC**
@@ -252,12 +252,12 @@
     * 3) Promotion 대상은 Old Generation Region으로 Copy
     * 4) 기존 Young Region은 garbage로 간주하여 해지
     * 5) Young Collection 이후 바로 Old Collection 실행
-    * ![G1 Minor GC](./img/G1 Minor GC.png)
+    * ![G1 Minor GC](./img/G1%20Minor%20GC.png)
     * http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
     * 기존 Collector처럼 Heap 전체로 처리하는 것이 아닌, Region 단위로 Collection 실행
     * suspend를 해당 region을 사용하는 쓰레드만으로 제한할 수 있음
   * **Full GC**
-    * ![G1 Full GC](./img/G1 Full GC.png)
+    * ![G1 Full GC](./img/G1%20Full%20GC.png)
     * G1 Old Generation Collection Step by Step : http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
 
 
