@@ -1,34 +1,32 @@
 # Execution Engine
 ## Execution Engine 이란?
 Class Loader를 통해 Load된 Class의 Byte Code를 실행하는 Runtime Module 이다.  
-자바 코드 실행 과정에 관한 앞선 내용들을 상기 해 보면, 아래와 같다.  
-// 이미지 추가
+자바 코드 실행 과정에 관한 앞선 내용들을 다시 살펴보면, 아래와 같다.  
+
+![자바 코드 동작 흐름도](./img/Execution_Engine.jpg)  
+
 1. 소스 코드(.java)를 javac로 컴파일하여 Bytecode(.class) 생성
 2. Class Loader가 Class Bytecode를 JVM으로 Load 및 Linking
 3. Execution Engine이 Bytecode를 instruction code로 전환하며, 이 때 interpreter 또는 JIT Compiler가 사용 됨
 
-// 이미지 추가
-
 ## Execution Engine의 방식
 Java는 Bytecode가 JVM에서 바로 수행되지 않는 구조로 설계가 되었기 때문에, JVM에서 바로 수행하도록 하는 과정이 필요하며 이를 수행 하는 것이 Execution Engine이다.  
-즉, Execution Engine이 Bytecode(.class)를 내부적으로 Instruction으로 변경하여 수행한다.  
+즉, Execution Engine이 Bytecode(.class)를 Instruction으로 변환하여 동작을 수행한다.  
 Execution Engine이 Bytecode를 해석하는 방법은 2가지가 있다.  
 
 1. interpreter 방식  
-Bytecode를 한 줄씩 해석하는 방식이다.  
-Bytecode를 한 줄씩 읽으므로 해석하는 시간이 짧다는 것이 장점이다.  
-하지만 Interpreter의 결과물을 수행하는 실행 시간은 많이 걸린다는 단점이 있다.(초기 JVM의 약점)  
-// 설명 추가
+    - Bytecode를 한 줄씩 해석하는 방식이다.  
+    - Bytecode를 한 줄씩 읽으므로 해석하는 시간이 짧다는 것이 장점이다.  
+    - 하지만 Interpreter의 결과물을 수행하는 실행 시간은 많이 걸린다는 단점이 있다.  
 
 2. JIT(Just-In-Time) Compiler 방식  
-적절한 시점에 Compile을 수행하는 방식이다.  
-Load된 Class에 대해 Interpreter 방식으로 동작을 하다가 반복 수행을 감지하면 적절하게 JIT Compiler가 동작하여 실행속도를 향상 시킨다.  
-Bytecode로부터 Native Code를 생성한 뒤에 실행하는 것이 핵심이다.  
-실행속도가 느린 Interpreter 방식의 단점을 이렇게 극복한 것 이다.  
-대신에 Interpreter보다 Native Code로 변환하는 시간은 더 길어진다.  
-JIT Compiler의 전체 실행시간 = Bytecode를 Native Code로 변환 하는 시간 + Native Code를 실행하는 시간  
-Native Code는 기본적으로 Memory Cache가 이루어지기 때문에 반복 호출 시 성능이 극대화 된다.  
-그러나 반복 수행이 되지 않으면, 오히러 Interpreter보다 성능이 떨어질 수 있다.  
+    - 적절한 시점에 Compile을 수행하는 방식이다.  
+    - Load된 Class에 대해 Interpreter 방식으로 동작을 하다가 반복 수행을 감지하면 적절하게 JIT Compiler가 동작하여 실행속도를 향상 시킨다.  
+    - Bytecode로부터 Native Code를 생성한 뒤에 실행하는 것이 핵심이다.  
+    - 실행속도가 느린 Interpreter 방식의 단점을 이렇게 극복한 것 이다.  
+    - 대신에 Interpreter보다 Native Code로 변환하는 시간은 더 길어진다.   
+    - Native Code는 기본적으로 Memory Cache가 이루어지기 때문에 반복 호출 시 성능이 극대화 된다.  
+    - 그러나 반복 수행이 되지 않으면, 오히러 Interpreter보다 성능이 떨어질 수 있다.  
 
 그래서 JVM은 기본적으로 Interpreter를 사용하다가 일정 기준을 넘어서게 되면 Jit Compliler를 사용한다.  
 이 방법을 'Lazy Fashion'이라고 한다.  
@@ -45,8 +43,7 @@ Java 코드
 			num = num + i;
 		}
 	}
-```
-
+```  
 Instruction 코드
 ```java
   public void loop();
@@ -67,14 +64,18 @@ Instruction 코드
       20: return
 ```
 
-![loop 조건 성공시의 instruction flow](./img/loop instruction.png)  
-위 그림처럼 for문의 instruction 순서는 4~17번 offset을 조건이 일치하는만큼 반복한다.  
+위 instruction 코드 흐름을 그림으로 표현하면 아래와 같다. 
 
-2. 다차원 배열을 지원하지 않음
-// 소스 추가
-// 이미지 추가
+![loop 조건 성공시의 instruction flow](./img/Loop_Instruction.png)  
+그림을 보면 offset 4~17번은 1번의 Loop를 의미하며, 한 번의 Loop문을 위해 8번의 Opcode 연산을 해야한다.   
+즉, 100번의 Loop는 총 800번의 Opcode 연산을 해야하는 것을 의미한다.  
 
-하지만 Loop 또는 다차원 배열의 사용을 꺼리 필요는 없다. 그 이유는 JVM을 구현한 벤더들이 이러한 약점을 보완하기 위하여 무수히 많은 최적화 기법을 동원하고 있고, Execution Engine 자체 성능이 지속적으로 개선되고 있기 때문이다.
+
+2. 다차원 배열을 지원하지 않음  
+
+![다차원 배열 소스에 해당하는 이미지]()  
+
+하지만 Loop 또는 다차원 배열의 사용을 꺼리 필요는 없다. 그 이유는 JVM을 구현한 벤더들이 이러한 약점을 보완하기 위하여 무수히 많은 최적화 기법을 동원하고 있고, Execution Engine 자체 성능이 지속적으로 개선되고 있기 때문이다.  
 
 ## Hotspot Compiler
 Hotspot Compiler의 이름의 유래는 Hotspot Compiler의 특성에서 기인한 것 이다.  
@@ -83,60 +84,60 @@ Hotspot Compiler는 Profiling을 통해 Hot Code를 구분하여 이를 집중�
 즉, 여러 Bytocode 가운데서 Hotspot을 골라내어 이를 집중적으로 최적화하는 Compiler이기 때문에 Hotspot이라는 명칭이 붙은 것 이다.  
 Hotspot Compiler의 또 다른 특징은 Interpreter와 JIT Compiler의 혼합모드(Mixed Mode System)구성이 되어있다는 것 이다.  
 
-![Hotspot Compiler 동작방식](./img/Hotspot Compiler 동작방식.png) 
+![Hotspot Compiler 동작방식](./img/Hotspot_Compiler_Flow.png) 
 
 먼저 Bytecode는 Interpreter를 통해 해석되고, Profiling을 거쳐 Dynamic Compile 된다.  
 이후 계속해서 사용이 반복되면 Recompile을 수행한다.  
 하지만 사용 횟수가 이전 같지 않다면 Compile이 번복되어 다시 Interpreter Mode로 수행된다.  
 
 간혹 간헐적으로 집중적인 수행 후, 한참 동안 수행이 되지 않는 Methor가 있을 경우, 이런 Method의 경우 Native Code를 계속해서 Cache 하는 것은 비효율적인 Memory 사용이라고 할 수 있다.  
-이 상황에서 Reverse Compile은 성능에 조금이나마 좋은 영향을 줄 수 있을 것이라 생각한다.
 
-Hotspot JVM은 Execution Engine 관점에서 아래 그림과 같이 두 개의 VM으로 구성된다.
-![Hotspot Compiler 동작방식](./img/Java Hotspot VM의 구성.png)
-이 두 VM의 차이는 Compiler이다.
+Hotspot JVM은 Execution Engine 관점에서 아래 그림과 같이 두 개의 VM으로 구성된다.  
+![Hotspot Compiler 동작방식](./img/Hotspot_VM.png)  
+이 두 VM의 차이는 Compiler이다.  
 
 ### C1 Compiler  
 빠르고, 가벼운 Otimization 과정을 가지기 때문에 Compile 시간이 비교적 짧다.  
 Optimization을 위해 Value Numbering, Inlining, Class Analysis 등의 작업을 주로 수행한다.  
 정적인 Compile을 수행한다. => 코드의 정형화된 패턴을 가지고 있는 부분을 대상으로 Compile한다.  
-Compile 대상을 선정하는 방식은 Profiling보다는 단순한 Counting Mechanism을 사용한다.
 
+## C1 Compiler의 주요 Optimization
 - Value Numbering
 장황한 Code를 축약하는 기법으로 아래의 그림을 보면 이해가 쉽다.  
 ![Value Numbering](./img/Value_Numbering.png)
 
+- Inlining
+불필요한 메소드 호출을 방지하기 위해 메소드 호출부를 메소드 내용으로 변경 하는 것 이다.  
+![Value Numbering]()
 
 ### C2 Compiler
 같은 이름으로 'Server Compiler, Opto Compiler, High Optimizaing Bytecode Compiler, Intermediate Optimizing Compiler'이 있다. 이름에서 알 수 있듯이 강력한 Optimization을 사용하는 것으로 짐작 할 수 있다.  
-Profiling Mechnism을 사용하여 Optimization을 가동한다.  
 
 ### C2 Compiler의 주요 Optimization
-- Common Sub-Expression Elimination
+- Common Sub-Expression Elimination  
 공통된 부분을 줄이는 Optimization 방법이다.  
 아래의 그림에서 공통된 부분 b * c를 tmp로 치환하여 한번만 연산하고 이를 참조하는 방식으로 바꾸는 방법을 의미한다.  
 ![CSE](./img/CSE.png)  
 
-- Loop Unrolling
+- Loop Unrolling  
 Loop를 풀어 놓은 것을 의미한다.  
 예를 들어 아래 그림과 같이 for문을 없애고, 값을 일일이 대입하는 방식으로 변환하는 것 이다.  
 for문을 없애게 되면 조건을 검사하는 Opcode가 필요없게 된다.  
 ![CSE](./img/Loop_Unrolling.png)  
 
-- On Stack Replacement
+- On Stack Replacement  
 Hotspot JVM이 자랑하는 Optimization 기법 중 하나이다.  
 보통 Loop 내에 임계값 이상의 반복 수행이 감지되면, 다음 Loop부터는 Compile을 수행하게 된다.(일반적인 JIT Compiler)  
 그러나 On Stack Replacement는 Loop를 수행하는 도중 Interpret 된 Code를 Compile을 수행하여 Compile된 코드로 대체한다.
 
-
-- Array-Bounds Check Elimination
-Compiler는 Array 인덱스가 경계범위(Array-Bounds)를 벗어나게 되면, ArrayOutOfBound Exception을 발생시킨다.  
+- Array-Bounds Check Elimination  
+Compiler는 Array 인덱스가 경계범위(Array-Bounds)를 벗어나게 되면, ArrayOutOfBound Exception이 발생한다.  
 이를 Automatic Bounds Checking이라고 한다. Automatic Bounds Checking은 Array 접근에 대한 불안 요소를 제거 해 주기는 하지만, 인덱스가 유효한지를 지속적으로 검사하기 때문에 실행 속도에 좋지 않은 영향을 준다.  
 Array-Bounds Check Elimination은 Optimization 단계에서 Array 인덱스의 최소, 최대 값을 상수화하여 사용하는 인덱스가 이 최소값과 최대값의 사이에 존재하는지만을 확인한다.
 
-- Dead Code Elimination
+- Dead Code Elimination  
 전혀 사용하지 않는 변수가 있을 경우, 아무데서도 사용하지 않으면 Compiler는 이와 관련한 코드를 Dead Code로 인식하여 Compile 단계에서 마치 처음부터 없었던 것처럼 수행에서 제외한다. 
-예를 들면, 아래와 같은 코드에서 변수 sum을 포함한 Code Block이 Dead Code라고 할 수 있다.
+예를 들면, 아래와 같은 코드에서 변수 sum을 포함한 Code Block이 Dead Code라고 할 수 있다.  
 ```java
 public class KillDeadCode {
     public static void main(String[] args) {
@@ -159,7 +160,13 @@ Loop 내에서 항상 같은 값을 가지는 상수처럼 사용되는 Code를 
 예를 들면 아래와 같이 cos(x)와 sin(x)는 항상 동일한 값을 나타내므로, 이 두 연산은 1번만 하는 것이 좋다.  
 ![CSE](./img/Code_Hoisting.png)  
 
-- Data Flow Analysis  
-
 - Deoptimization  
 Hotspot Compiler만 가진 기능으로 사용빈도가 떨어진 Compiled Code를 Cache에서 폐기하고 다시 Interpret Mode로 수행되도록 하는 것 이다. 자원을 최적화하여 배치하는 측면에서 시스템 전반에 관한 Optimization이라고 할 수 있다.
+
+- 기타  
+Data Flow Analsis, Class Hierachy Analsis 등이 있다.
+
+## 요약
+- 자바의 Bytecode는 JVM에서 바로 실행되지 않는다.  
+- Bytecode를 해석해서 실행 시켜주는 모듈이 Execution Engine이다.  
+- Execution Engine은 Interpreter 방식과 JIT Compiler 2가지 방식으로 상황에 유연하게 해석한다.  
