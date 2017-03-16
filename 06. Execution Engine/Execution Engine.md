@@ -72,8 +72,12 @@ Instruction 코드
 
 
 2. 다차원 배열을 지원하지 않음  
+자바의 다차원 배열은 메모리 구조상 순차적인 구조를 이루지 않는다.  
+즉, 다차원 배열은 아래와 같이 1차원 배열의 혼합구성으로 이루어 진다.  
+![다차원 배열 혼합구성](./img/arr_reference.jpg)  
 
-![다차원 배열 소스에 해당하는 이미지]()  
+다차원 배열은 여러 개의 1차원 배열을 혼합해서 구성하면서, 간단한 다차원 배열의 연산조차 아래와 같이 꽤 많은 양의 연산이 수행된다.  
+![다차원 배열 소스에 해당하는 이미지](./img/arr_opcode.png)  
 
 하지만 Loop 또는 다차원 배열의 사용을 꺼리 필요는 없다. 그 이유는 JVM을 구현한 벤더들이 이러한 약점을 보완하기 위하여 무수히 많은 최적화 기법을 동원하고 있고, Execution Engine 자체 성능이 지속적으로 개선되고 있기 때문이다.  
 
@@ -81,7 +85,8 @@ Instruction 코드
 Hotspot Compiler의 이름의 유래는 Hotspot Compiler의 특성에서 기인한 것 이다.  
 Hotspot Compiler는 Profiling을 통해 Hot Code를 구분하여 이를 집중적으로 Compile한다.  
 **이는 불필요한 Compile을 회피하고 Hot Code에 Optimization을 집중할 수 있게 해 준다.**  
-즉, 여러 Bytocode 가운데서 Hotspot을 골라내어 이를 집중적으로 최적화하는 Compiler이기 때문에 Hotspot이라는 명칭이 붙은 것 이다.  
+즉, 여러 Bytecode 가운데서 Hotspot을 골라내어 이를 집중적으로 최적화하는 Compiler이기 때문에 Hotspot이라는 명칭이 붙은 것 이다.  
+여러 Bytecode 가운데서 Hotspot을 골라내는 방법을 profiling이라고 한다.  
 Hotspot Compiler의 또 다른 특징은 Interpreter와 JIT Compiler의 혼합모드(Mixed Mode System)구성이 되어있다는 것 이다.  
 
 ![Hotspot Compiler 동작방식](./img/Hotspot_Compiler_Flow.png) 
@@ -96,6 +101,14 @@ Hotspot JVM은 Execution Engine 관점에서 아래 그림과 같이 두 개의 
 ![Hotspot Compiler 동작방식](./img/Hotspot_VM.png)  
 이 두 VM의 차이는 Compiler이다.  
 
+그러면 어떻게 Hotspot Compiler는 선택이 될까??  아래의 조건에 따라 선택이 된다고 한다.  
+- Server VM  
+    - 물리적 CPU가 2개 이상이고, 물리적 메모리가 2GB이상  
+    - -server 옵션을 명시적으로 사용했을 때  
+- Client VM  
+    - 물리적 CPU와 물리적 메모리가 Server VM의 조건에 미치지 못 할 때  
+    - -client 옵션을 명시적으로 사용했을 때  
+
 ### C1 Compiler  
 빠르고, 가벼운 Otimization 과정을 가지기 때문에 Compile 시간이 비교적 짧다.  
 Optimization을 위해 Value Numbering, Inlining, Class Analysis 등의 작업을 주로 수행한다.  
@@ -104,11 +117,11 @@ Optimization을 위해 Value Numbering, Inlining, Class Analysis 등의 작업�
 ## C1 Compiler의 주요 Optimization
 - Value Numbering
 장황한 Code를 축약하는 기법으로 아래의 그림을 보면 이해가 쉽다.  
-![Value Numbering](./img/Value_Numbering.png)
+![Value Numbering](./img/Value_Numbering.png)  
 
 - Inlining
 불필요한 메소드 호출을 방지하기 위해 메소드 호출부를 메소드 내용으로 변경 하는 것 이다.  
-![Value Numbering]()
+![Value Numbering](./img/Inline.png)  
 
 ### C2 Compiler
 같은 이름으로 'Server Compiler, Opto Compiler, High Optimizaing Bytecode Compiler, Intermediate Optimizing Compiler'이 있다. 이름에서 알 수 있듯이 강력한 Optimization을 사용하는 것으로 짐작 할 수 있다.  
@@ -166,7 +179,13 @@ Hotspot Compiler만 가진 기능으로 사용빈도가 떨어진 Compiled Code�
 - 기타  
 Data Flow Analsis, Class Hierachy Analsis 등이 있다.
 
+## 참조  
+- Hotspot 설명 : <http://www.oracle.com/technetwork/java/hotspotfaq-138619.html>
+- Hotspot Options : <http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html>
+- Hotspot 컴파일러에서 Client VM, Server VM의 차이 : <http://stackoverflow.com/questions/198577/real-differences-between-java-server-and-java-client>
+
 ## 요약
 - 자바의 Bytecode는 JVM에서 바로 실행되지 않는다.  
 - Bytecode를 해석해서 실행 시켜주는 모듈이 Execution Engine이다.  
 - Execution Engine은 Interpreter 방식과 JIT Compiler 2가지 방식으로 상황에 유연하게 해석한다.  
+- JIT Compiler로 Compile 된 Native Code는 메모리에 자동 캐싱 되므로, 여러번 반복되는 코드에 적용하며 이외의 경우에는 Interpreter를 사용한다.  
