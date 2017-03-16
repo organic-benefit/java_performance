@@ -26,7 +26,7 @@ Execution Engine이 Bytecode를 해석하는 방법은 2가지가 있다.
     - 실행속도가 느린 Interpreter 방식의 단점을 이렇게 극복한 것 이다.  
     - 대신에 Interpreter보다 Native Code로 변환하는 시간은 더 길어진다.   
     - Native Code는 기본적으로 Memory Cache가 이루어지기 때문에 반복 호출 시 성능이 극대화 된다.  
-    - 그러나 반복 수행이 되지 않으면, 오히러 Interpreter보다 성능이 떨어질 수 있다.  
+    - 그러나 반복 수행이 되지 않으면, 오히려 Interpreter보다 성능이 떨어질 수 있다.  
 
 그래서 JVM은 기본적으로 Interpreter를 사용하다가 일정 기준을 넘어서게 되면 Jit Compliler를 사용한다.  
 이 방법을 'Lazy Fashion'이라고 한다.  
@@ -68,7 +68,7 @@ Instruction 코드
 
 ![loop 조건 성공시의 instruction flow](./img/Loop_Instruction.png)  
 그림을 보면 offset 4~17번은 1번의 Loop를 의미하며, 한 번의 Loop문을 위해 8번의 Opcode 연산을 해야한다.   
-즉, 100번의 Loop는 총 800번의 Opcode 연산을 해야하는 것을 의미한다.  
+즉, 이 예제에서의 100번의 Loop는 총 800번의 Opcode 연산을 해야하는 것을 의미한다.  
 
 
 2. 다차원 배열을 지원하지 않음  
@@ -77,6 +77,7 @@ Instruction 코드
 ![다차원 배열 혼합구성](./img/arr_reference.jpg)  
 
 다차원 배열은 여러 개의 1차원 배열을 혼합해서 구성하면서, 간단한 다차원 배열의 연산조차 아래와 같이 꽤 많은 양의 연산이 수행된다.  
+
 ![다차원 배열 소스에 해당하는 이미지](./img/arr_opcode.png)  
 
 하지만 Loop 또는 다차원 배열의 사용을 꺼리 필요는 없다. 그 이유는 JVM을 구현한 벤더들이 이러한 약점을 보완하기 위하여 무수히 많은 최적화 기법을 동원하고 있고, Execution Engine 자체 성능이 지속적으로 개선되고 있기 때문이다.  
@@ -99,7 +100,7 @@ Hotspot Compiler의 또 다른 특징은 Interpreter와 JIT Compiler의 혼합�
 
 Hotspot JVM은 Execution Engine 관점에서 아래 그림과 같이 두 개의 VM으로 구성된다.  
 ![Hotspot Compiler 동작방식](./img/Hotspot_VM.png)  
-이 두 VM의 차이는 Compiler이다.  
+이 두 VM의 가장 큰 차이는 Compiler이며, 이 차이로 인해 Optimization에서도 큰 차이가 있다.  
 
 그러면 어떻게 Hotspot Compiler는 선택이 될까??  아래의 조건에 따라 선택이 된다고 한다.  
 - Server VM  
@@ -114,7 +115,7 @@ Hotspot JVM은 Execution Engine 관점에서 아래 그림과 같이 두 개의 
 Optimization을 위해 Value Numbering, Inlining, Class Analysis 등의 작업을 주로 수행한다.  
 정적인 Compile을 수행한다. => 코드의 정형화된 패턴을 가지고 있는 부분을 대상으로 Compile한다.  
 
-## C1 Compiler의 주요 Optimization
+### C1 Compiler의 주요 Optimization
 - Value Numbering
 장황한 Code를 축약하는 기법으로 아래의 그림을 보면 이해가 쉽다.  
 ![Value Numbering](./img/Value_Numbering.png)  
@@ -180,9 +181,10 @@ Hotspot Compiler만 가진 기능으로 사용빈도가 떨어진 Compiled Code�
 Data Flow Analsis, Class Hierachy Analsis 등이 있다.
 
 ## 참조  
-- Hotspot 설명 : <http://www.oracle.com/technetwork/java/hotspotfaq-138619.html>
-- Hotspot Options : <http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html>
-- Hotspot 컴파일러에서 Client VM, Server VM의 차이 : <http://stackoverflow.com/questions/198577/real-differences-between-java-server-and-java-client>
+- On Stack Replacement(OSR)에 대한 자세한 설명 : <http://xmlandmore.blogspot.com/2012/06/on-stack-replacement-in-hotspot-jvm.html>  
+- Hotspot 설명 : <http://www.oracle.com/technetwork/java/hotspotfaq-138619.html>  
+- Hotspot Options : <http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html>  
+- Hotspot 컴파일러에서 Client VM, Server VM의 차이 : <http://stackoverflow.com/questions/198577/real-differences-between-java-server-and-java-client>  
 
 ## 요약
 - 자바의 Bytecode는 JVM에서 바로 실행되지 않는다.  
