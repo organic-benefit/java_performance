@@ -185,9 +185,12 @@ Data Flow Analsis, Class Hierachy Analsis 등이 있다.
 - Hotspot 설명 : <http://www.oracle.com/technetwork/java/hotspotfaq-138619.html>  
 - Hotspot Options : <http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html>  
 - Hotspot 컴파일러에서 Client VM, Server VM의 차이 : <http://stackoverflow.com/questions/198577/real-differences-between-java-server-and-java-client>  
+- Hotspot JIT Compiler mode[c1, c2] : <http://www.oracle.com/technetwork/articles/java/architect-evans-pt1-2266278.html>
 
 ## 요약
 - 자바의 Bytecode는 JVM에서 바로 실행되지 않는다.  
 - Bytecode를 해석해서 실행 시켜주는 모듈이 Execution Engine이다.  
 - Execution Engine은 Interpreter 방식과 JIT Compiler 2가지 방식으로 상황에 유연하게 해석한다.  
 - JIT Compiler로 Compile 된 Native Code는 메모리에 자동 캐싱 되므로, 여러번 반복되는 코드에 적용하며 이외의 경우에는 Interpreter를 사용한다.  
+- Hotspot Compiler에서의 C1, C2 Compiler는 JIT Compiler의 모드를 의미하며, Optimiaztion에서 큰 차이를 보인다. 이 두 개의 Compiler에서 Optimization을 위한 코드 분석 하는 과정을 Profiling이라고 부른다.  
+- 자바7부터는 Hotspt Compiler의 두 가지 모드인 C1, C2 Compiler 모드 둘 다 사용 가능하다. 어플리케이션 시작 시에는 C1 Compiler 모드를 사용하고, 이 후 Hotspot이 감지될 쯤 C2 Compiler 모드를 사용한다. 자바 8부터는 이 기능이 default로 잡혀있다.  
