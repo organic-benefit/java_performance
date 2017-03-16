@@ -331,3 +331,14 @@ Preparation 작업에서 Default 로 설정해 놓은 Class Variable 을 적절�
 	- Initialization이 끝나면 다른 Thread들에 Notify
 3. Loading, Linking에 비해 Initialization Time은 엄격히 정의하고 있음
 	- Loading, Linking은 Initialization 보다 반드시 선행
+	
+## Java Virtual Machine process 정리 
+1. Java Virtual Machine Startup
+2. 부트스트랩 (Bootstrap) Class loader 생성 -> Object Class 등 java API 로드
+3. Java Virtual Machine은 초기 클래스를 링크하고 이를 초기화하고 public 클래스 메소드 void main (String [])을 호출.
+4. Java를 수행하기 위한 런타임환경을 구성.
+5. 런타임에 동적으로 클래스를 로딩한다는 것은 JVM이 클래스에 대한 정보를 갖고 있지 않다는 것을 의미. JVM은 클래스에 대한 정보를 알지 못한다.
+6. 클래스로더는 클래스를 로딩할 때 필요한 정보를 구하고, 그 클래스가 올바른지 검사해야 한다.
+7. 클래스가 참조되는 순간 클래스로더에서 클래스 Load 후 Heap 에 인스턴스를 만든다.
+8. Linking 단계에서 java 문법에 맞는지 검증하고, Method Area에 적재할 Meta data 만든다.
+9. java stack에 만들어진 meta data를 가지고와 실행한다.
