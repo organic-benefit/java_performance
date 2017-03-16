@@ -331,10 +331,3 @@ Preparation 작업에서 Default 로 설정해 놓은 Class Variable 을 적절�
 	- Initialization이 끝나면 다른 Thread들에 Notify
 3. Loading, Linking에 비해 Initialization Time은 엄격히 정의하고 있음
 	- Loading, Linking은 Initialization 보다 반드시 선행
-
-
-## 3. 정리
-JVM 클래스 로더에 대해 알아보았다.
-
-## 4. 참고
-http://www.hakawati.co.kr/21
