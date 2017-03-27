@@ -2,7 +2,7 @@
 
 ### 1. 자바의 Thread 변천사
 
-##### - Native Thread VS White Thread
+##### - Native Thread VS Application Thread
 * **Native Thread (White Thread)** : OS 가 관리하는 Thread.
 * **Application Thread (Green Thread)** : 어플리케이션이 관리하는 Thread. Green Thread 는 White Thread를 1:n 으로 시분할하여 사용하는 방식.
 
@@ -33,7 +33,7 @@
 * Cooperation : 다른 Thread 간의 통신을 통해 Lock 을 점유하는 방식.
 * 한 스레드가 wait 을 통해 일시적으로 Critical Section 에서 빠져나오면, 다른쓰레드가 Critical Section에 점유 할 수 있다.
 
-![Referenced Object Load](./pic01.jpg)
+![Referenced Object Load](./pic02.jpg)
 
 * Scenario
   1. 하나의 Thread가 Critical Section 으로 들어온다. (Lock 이 잡힘)
@@ -80,7 +80,7 @@
 
 * Compare And Swap (CAS) : Light Weight Lock 을 의미.
 
-![Referenced Object Load](./pic02.jpg)
+![Referenced Object Load](./pic01.jpg)
 
 * Scenario
  1. 한 Thread 가 CAS 를 통해 특정 Object 를 사용 할 때 (첫번째 상태)
