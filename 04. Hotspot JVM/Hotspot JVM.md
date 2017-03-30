@@ -224,13 +224,13 @@
       * 정해진 Dense Prefix의 좌측은 GC에서 제외되고, 나머지만 Compaction (Sliding Compaction)
       * 오랜 기간 참조되는 Object는 좌측에 집중되므로 gabage가 되지 않을 확률이 높다
     * Dense Prefix 설정 후, Compaction 대상이 되는 Region의 첫 주소를 찾아 저장하고 phase 종료.
-    * ![9. Parallel Compaction - Summary Phase](./img/9.%20Parallel%20Compaction%20-%20Summary Phase.jpg)
+    * ![9. Parallel Compaction - Summary Phase](./img/9.%20Parallel%20Compaction%20-%20Summary%20Phase.jpg)
   * **3) Compaction Phase**
     * Heap Suspend. 모든 Thread가 Region을 할당받아 작업 수행
     * Garbage의 Sweep 처리 (Reachable Object를 왼편으로)
       * Dense 이후의 Region을 Destination, Source를 구분하여 작업 수행
       * Live Object를 어디에서 어디로 옮길 것인지 판단
-    * ![10. Parallel Compaction - Compaction Phase](./img/10.%20Parallel%20Compaction%20-%20Compaction Phase.jpg)
+    * ![10. Parallel Compaction - Compaction Phase](./img/10.%20Parallel%20Compaction%20-%20Compaction%20Phase.jpg)
 
 ### Garbage First Collector
   * JAVA 6 Update 14에 포함. 가장 최신의 Collector
